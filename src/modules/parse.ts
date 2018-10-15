@@ -7,30 +7,53 @@ import * as t from '@babel/types';
 export const parseCode = (code: string): string => {
     if (code) {
         try {
-            const imports: Array<any> = [];
+            const imports: Array<t.ImportDeclaration> = [];
 
             const ast = babelParser.parse(code, {
                 allowImportExportEverywhere: true,
                 allowAwaitOutsideFunction: true,
                 allowReturnOutsideFunction: true,
                 allowSuperOutsideMethod: true,
+                sourceType: "module",
                 plugins: [
                     'jsx',
                     'flow',
                     'classProperties',
+                    "doExpressions",
+                    "objectRestSpread",
+                    'decorators-legacy',
+                    "classProperties",
+                    "classPrivateProperties",
+                    "classPrivateMethods",
+                    "exportDefaultFrom",
+                    "exportNamespaceFrom",
+                    "asyncGenerators",
+                    "functionBind",
+                    "functionSent",
+                    "dynamicImport",
+                    "numericSeparator",
+                    "optionalChaining",
+                    "importMeta",
+                    "bigInt",
+                    "optionalCatchBinding",
+                    "throwExpressions",
+                    'nullishCoalescingOperator',
                 ]
             });
-            traverse(ast, {
+            traverse(ast, {                
                 ImportDeclaration: (path) => {
-                    imports.push(path);
-                    path.replaceWith(
-                        imports[0]
-                      );
+                    if (path.isImportDeclaration()) {                        
+                        imports.push(path.node);
+                        path.remove();
+                    }
                 },
             });
-            return generate(ast, {
-                
-            }, code).code;
+            traverse(ast, {
+                Program: (path) => {
+                    path.node.body.unshift(...imports);
+                }
+            });
+            return generate(ast, {}, code).code;
         } catch (e) {
             vscode.window.showErrorMessage(e.message);
         }
