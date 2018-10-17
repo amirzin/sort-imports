@@ -15,7 +15,7 @@ Platform:
 
 npm manifest: 
   {
-      "name": "react-imports-sorter",
+      "name": "sort-imports",
       "displayName": "React Imports Sorter",
       "description": "",
       "version": "0.0.1",
@@ -27,14 +27,14 @@ npm manifest:
           "Other"
       ],
       "activationEvents": [
-          "onCommand:extension.sayHello"
+          "onCommand:extension.sortImports"
       ],
       "main": "./out/extension",
       "contributes": {
           "commands": [
               {
-                  "command": "extension.sayHello",
-                  "title": "Hello World"
+                  "command": "extension.sortImports",
+                  "title": "Sort imports my way"
               }
           ]
       },
